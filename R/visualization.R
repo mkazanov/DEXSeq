@@ -323,8 +323,7 @@ drawGene <- function(minx, maxx, tr, exoncol=NULL, names, trName, newPanel=TRUE,
     rango <- seq_len(nrow(tr))
     if( drawExons ){
         rect(tr[rango,"start"], miny, tr[rango,"end"], maxy, col=exoncol)
-        text(tr[rango,"start"],tr[rango,"end"],row.names(tr))
-        print(row.names(tr))
+        text(tr[rango,"start"],miny,row.names(tr))
     }
     if( drawIntronLines ){
         zr <- apply(rbind(tr[rango, "end"], tr[rango+1, "start"]), 2, median)
