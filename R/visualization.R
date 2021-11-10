@@ -235,7 +235,7 @@ plotDEXSeq <- function( object, geneID, FDR=0.1, fitExpToVar="condition",
           if(!is.null(additionalAnnotation)){
               for( j in seq_along(additionalAnnotation) ){
                   tr <- as.data.frame( additionalAnnotation[[j]] )[,c("start", "end")]
-                  drawGene(min(sub$start), max(sub$end), tr=tr, exoncol="darkblue", names, trName=names(additionalAnnotation)[j], cex=0.8, introncol="darkblue")
+                  drawGene(min(sub$start), max(sub$end), tr=tr, exoncol="lightblue", names, trName=names(additionalAnnotation)[j], cex=0.8, introncol="lightblue")
                   i <- i + 1
                   if( i > 40 ) break
               }
@@ -323,7 +323,8 @@ drawGene <- function(minx, maxx, tr, exoncol=NULL, names, trName, newPanel=TRUE,
     rango <- seq_len(nrow(tr))
     if( drawExons ){
         rect(tr[rango,"start"], miny, tr[rango,"end"], maxy, col=exoncol)
-        text(tr[rango,"start"],miny,row.names(tr))
+        xpos <- apply(rbind(tr[rango, "start"], tr[rango, "end"]), 2, median)
+        text(xpos, 0.5, row.names(tr))
     }
     if( drawIntronLines ){
         zr <- apply(rbind(tr[rango, "end"], tr[rango+1, "start"]), 2, median)
