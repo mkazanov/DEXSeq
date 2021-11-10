@@ -235,6 +235,7 @@ plotDEXSeq <- function( object, geneID, FDR=0.1, fitExpToVar="condition",
           if(!is.null(additionalAnnotation)){
               for( j in seq_along(additionalAnnotation) ){
                   tr <- as.data.frame( additionalAnnotation[[j]] )[,c("start", "end")]
+                  names(tr) <- names(additionalAnnotation[[j]])
                   drawGene(min(sub$start), max(sub$end), tr=tr, exoncol="darkblue", names, trName=names(additionalAnnotation)[j], cex=0.8, introncol="darkblue")
                   i <- i + 1
                   if( i > 40 ) break
