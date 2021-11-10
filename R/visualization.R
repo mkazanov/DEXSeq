@@ -2,7 +2,7 @@ plotDEXSeq <- function( object, geneID, FDR=0.1, fitExpToVar="condition",
                        norCounts=FALSE, expression=TRUE, splicing=FALSE,
                        displayTranscripts=FALSE, names=FALSE, legend=FALSE,
                        color=NULL, color.samples=NULL, transcriptDb=NULL,
-                       additionalAnnotation=NULL, maxRowsMF=2400, ...)
+                       additionalAnnotation=NULL, maxRowsMF=2400, maxNumTrans=40, ...)
 {
    stopifnot(is( object, "DEXSeqResults") | is( object, "DEXSeqDataSet"))
    if ( !fitExpToVar %in% colnames( object@modelFrameBM ) ) {
@@ -86,14 +86,14 @@ plotDEXSeq <- function( object, geneID, FDR=0.1, fitExpToVar="condition",
       numberOfTrans <- length(trans) + length(additionalAnnotation)
       
       if( (displayTranscripts & !is.null( unlist(transcripts) ) ) | !is.null(additionalAnnotation) ){
-         if(numberOfTrans > 40){
-            warning("This gene contains more than 40 transcripts annotated, only the first 40 will be plotted\n")
+         if(numberOfTrans > maxNumTrans){
+            warning(paste0("This gene contains more than ",maxNumTrans," transcripts annotated, only the first ",maxNumTrans," will be plotted\n"))
          }
          if( !displayTranscripts ){
              numberOfTrans <- numberOfTrans - length(trans)
          }
-         mat <- seq_len(3+min(numberOfTrans, 40)) ## max support from transcripts is 40, which seems to be the max for the layout supported by graphics
-         hei<-c(8, 1, 1.5, rep(1.5, min(numberOfTrans, 40)))
+         mat <- seq_len(3+min(numberOfTrans, maxNumTrans)) ## max support from transcripts is 40, which seems to be the max for the layout supported by graphics
+         hei<-c(8, 1, 1.5, rep(1.5, min(numberOfTrans, maxNumTrans)))
       }else{
          mat<-1:3
          hei<-c(5, 1, 1.5)
@@ -195,7 +195,7 @@ plotDEXSeq <- function( object, geneID, FDR=0.1, fitExpToVar="condition",
           i <- 1
       ##### plot the transcripts #######
           if(displayTranscripts){
-              for(i in seq_len(min(length(trans), 40))) {
+              for(i in seq_len(min(length(trans), maxNumTrans))) {
                   logicexons <- sapply(transcripts, function(x){length(which(x==trans[i]))})
                   tr <- reduce(IRanges( sub$start[logicexons == 1], sub$end[logicexons==1] ))
                   if( is.null( transcriptDb ) ){
@@ -237,7 +237,7 @@ plotDEXSeq <- function( object, geneID, FDR=0.1, fitExpToVar="condition",
                   tr <- as.data.frame( additionalAnnotation[[j]] )[,c("start", "end")]
                   drawGene(min(sub$start), max(sub$end), tr=tr, exoncol="lightblue", names, trName=names(additionalAnnotation)[j], cex=0.8, introncol="lightblue")
                   i <- i + 1
-                  if( i > 40 ) break
+                  if( i > maxNumTrans ) break
               }
           }
       }
@@ -324,7 +324,9 @@ drawGene <- function(minx, maxx, tr, exoncol=NULL, names, trName, newPanel=TRUE,
     if( drawExons ){
         rect(tr[rango,"start"], miny, tr[rango,"end"], maxy, col=exoncol)
         xpos <- apply(rbind(tr[rango, "start"], tr[rango, "end"]), 2, median)
-        text(xpos, 0.5, row.names(tr))
+        if(introncol=="lightblue"){
+         text(xpos, 0.5, row.names(tr))
+        }
     }
     if( drawIntronLines ){
         zr <- apply(rbind(tr[rango, "end"], tr[rango+1, "start"]), 2, median)
