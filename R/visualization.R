@@ -318,7 +318,7 @@ drawGene <- function(minx, maxx, tr, exoncol=NULL, names, trName, newPanel=TRUE,
 {
     if( newPanel ){
         plot.new()
-        plot.window(xlim=c(minx, maxx), ylim=c(0, 1))
+        plot.window(xlim=c(minx, maxx), ylim=c(-0.2, 1))
     }
     rango <- seq_len(nrow(tr))
     if( drawExons ){
