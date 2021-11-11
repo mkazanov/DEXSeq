@@ -318,14 +318,14 @@ drawGene <- function(minx, maxx, tr, exoncol=NULL, names, trName, newPanel=TRUE,
 {
     if( newPanel ){
         plot.new()
-        plot.window(xlim=c(minx, maxx), ylim=c(-0.2, 1))
+        plot.window(xlim=c(minx, maxx), ylim=c(0, 1.2))
     }
     rango <- seq_len(nrow(tr))
     if( drawExons ){
         rect(tr[rango,"start"], miny, tr[rango,"end"], maxy, col=exoncol)
         xpos <- apply(rbind(tr[rango, "start"], tr[rango, "end"]), 2, median)
         if(introncol=="lightblue"){
-         text(xpos, -0.2, row.names(tr))
+         text(xpos, 1.2, row.names(tr))
         }
     }
     if( drawIntronLines ){
